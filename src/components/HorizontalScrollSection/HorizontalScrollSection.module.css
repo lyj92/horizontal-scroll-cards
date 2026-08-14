@@ -1,0 +1,109 @@
+/**
+ * HorizontalScrollSection.module.css
+ *
+ * 가로 스크롤 섹션의 핵심 레이아웃.
+ * sticky-container + scrollLeft 패턴의 CSS.
+ */
+
+.section {
+  background-color: var(--color-bg);
+}
+
+.container {
+  /**
+   * height는 JS(useHorizontalScroll)에서 동적으로 설정됨.
+   * position: relative로 자식 sticky의 기준점 역할.
+   */
+  position: relative;
+}
+
+.stickyWrapper {
+  /**
+   * 뷰포트 중앙 트리거 구현:
+   * - top 값은 JS에서 동적으로 계산하여 설정됨:
+   *   top = (viewportHeight - contentHeight) / 2
+   * - 이로써 콘텐츠가 뷰포트 정중앙에 도달하는 순간 sticky가 걸림.
+   * - 고정된 동안 콘텐츠 중심 = 뷰포트 중심 (수학적 보장).
+   *
+   * height: auto를 사용하는 이유:
+   * - 콘텐츠 자연 높이를 유지하여 중앙 오프셋 계산이 정확함.
+   * - 100vh를 쓰면 콘텐츠가 뷰포트 상단에 닿을 때 고정되어
+   *   "중앙 트리거" 요구사항을 만족시키지 못함.
+   *
+   * Safari 호환성 주의 (overflow 분리):
+   * - position: sticky + overflow: hidden을 같은 요소에 적용하면
+   *   Safari에서 sticky가 완전히 무시되는 렌더링 버그가 발생함.
+   * - 해결: overflow 처리를 자식 scrollContainer에 위임하고,
+   *   stickyWrapper에서는 overflow를 건드리지 않음.
+   */
+  position: -webkit-sticky; /* Safari 구버전 호환 */
+  position: sticky;
+  /* top은 JS에서 동적 설정: (viewportHeight - contentHeight) / 2 */
+  /* overflow: hidden 의도적 미적용 — Safari sticky 호환성 */
+}
+
+.scrollContainer {
+  /**
+   * overflow-x: scroll을 사용하는 핵심 이유:
+   * - CSS position: sticky(left 방향)는 실제로 스크롤되는 컨테이너 안에서만 동작.
+   * - translateX 방식에서는 sticky가 작동하지 않아 타이틀 고정이 불가능했음.
+   * - scrollLeft를 JS로 제어하면서도 CSS sticky의 이점을 누림.
+   *
+   * 스크롤바 숨김:
+   * - 실제 사용자는 마우스 휠(세로 스크롤)로 조작하므로
+   *   가로 스크롤바가 보이면 혼란을 줄 수 있음.
+   * - scrollbar-width: none (Firefox)
+   * - -ms-overflow-style: none (IE/Edge)
+   * - ::-webkit-scrollbar { display: none } (Chrome/Safari)
+   */
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.track {
+  /**
+   * display: flex로 CardGroup들을 가로로 나열.
+   * inline-flex가 아닌 flex를 사용한 이유:
+   * - 부모(scrollContainer)의 전체 너비를 활용하면서도
+   *   자식이 넘치면 자연스럽게 스크롤 영역이 확장됨.
+   */
+  display: flex;
+  align-items: stretch;
+}
+
+/* ─── 반응형 (태블릿/모바일) ─── */
+@media (max-width: 1024px) {
+  .container {
+    height: auto !important;
+  }
+
+  .stickyWrapper {
+    /**
+     * 모바일: sticky 해제, 일반 블록 요소로 전환.
+     * 가로 스크롤이 없으므로 화면 고정이 불필요.
+     */
+    position: relative;
+    height: auto;
+    overflow: visible;
+  }
+
+  .scrollContainer {
+    overflow: visible;
+  }
+
+  .track {
+    /**
+     * 모바일: 세로 나열로 전환.
+     * 각 그룹이 전체 너비를 사용하며 세로로 쌓임.
+     */
+    flex-direction: column;
+    gap: 40px;
+  }
+}

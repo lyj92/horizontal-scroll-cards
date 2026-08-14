@@ -1,0 +1,51 @@
+/**
+ * DummySection.module.css
+ *
+ * 더미 섹션의 스타일.
+ * min-height: 100vh로 설정해 스크롤 공간을 확보함.
+ */
+
+.section {
+  /**
+   * min-height: 100vh를 사용하는 이유:
+   * - 가로 스크롤 섹션 전후에 충분한 스크롤 여유를 줘야
+   *   사용자가 자연스럽게 세로 → 가로 → 세로 전환을 경험할 수 있음.
+   * - 100vh는 뷰포트 전체 높이를 의미하므로 어떤 기기에서든
+   *   최소 한 화면 분량의 스크롤 공간이 보장됨.
+   */
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.content {
+  max-width: var(--content-max-width);
+  padding: 0 var(--content-padding);
+  text-align: center;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+}
+
+.description {
+  font-size: 1.125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+}
+
+@media (max-width: 1024px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 1rem;
+  }
+}
